@@ -1,0 +1,20 @@
+keras>=3.0.0
+torch>=2.1.0
+torchvision>=0.16.0
+
+# ferramentas de build ( para Godot C++)
+# SCons é o sistema de construção que o Godot usa para GDExtensions
+scons>=4.5.0
+
+pandas>=2.1.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# aqui eh para a exportação e ponte C++ (com o Godot)
+# eh para salvar o modelo de forma que o C++ entenda
+onnx>=1.15.0
+onnxruntime>=1.16.0
+
+matplotlib>=3.8.0
+seaborn>=0.13.0
+tensorboard>=2.15.0
