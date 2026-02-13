@@ -1,16 +1,36 @@
-# Godot 4+ specific ignores
-.godot/
-.nomedia
-
-# Godot-specific ignores
-.import/
-export.cfg
-export_credentials.cfg
-
-# Imported translations (automatically generated from CSV files)
+# Godot #
+godot_space/.godot/
+godot_space/.import/
+godot_space/export.cfg
+godot_space/export_credentials.cfg
 *.translation
+#########
 
-# Mono-specific ignores
-.mono/
-data_*/
-mono_crash.*.json
+# bibliotecas C++ #
+src_cpp/libtorch/
+src_cpp/godot_cpp/
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+src_cpp/.sconsign.dblite
+###################
+
+# dados #
+ml_model_workspace/data/*
+!ml_model_workspace/data/.gitkeep
+#########
+
+# modelo #
+models/*.pt
+models/*.pth
+models/*.onnx
+##########
+
+# ambiente #
+environment/venv/
+environment/.env
+.ipynb_checkpoints/
+############
