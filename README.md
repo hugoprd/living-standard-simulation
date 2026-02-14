@@ -2,9 +2,9 @@
 
 -----
 
-`[Ir para descrição PT-BR](README.md#descrição)`
+`[Ir para descrição PT-BR](#descrição)`
 
-`[Go to US-EN description](README.md#description)`
+`[Go to US-EN description](#description)`
 
 -----
 
