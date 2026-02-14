@@ -1,9 +1,9 @@
 # Godot #
-godot_space/.godot/
-godot_space/.import/
-godot_space/export.cfg
-godot_space/export_credentials.cfg
-*.translation
+godot_space/living-standard-simulation-ambient/.godot/
+godot_space/living-standard-simulation-ambient/.import/
+godot_space/living-standard-simulation-ambient/export.cfg
+godot_space/living-standard-simulation-ambient/export_credentials.cfg
+godot_space/living-standard-simulation-ambient/*.translation
 #########
 
 # bibliotecas C++ #
