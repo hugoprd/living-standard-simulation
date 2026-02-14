@@ -20,6 +20,7 @@ src_cpp/.sconsign.dblite
 
 # dados #
 ml_model_workspace/data/*
+!ml_model_workspace/data/README.md
 !ml_model_workspace/data/.gitkeep
 #########
 
