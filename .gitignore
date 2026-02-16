@@ -20,6 +20,7 @@ src_cpp/.sconsign.dblite
 
 # dados #
 ml_model_workspace/data/*
+ml_model_workspace/TODO.md
 !ml_model_workspace/data/README.md
 !ml_model_workspace/data/.gitkeep
 #########
@@ -35,6 +36,11 @@ environment/venv/
 environment/.env
 .ipynb_checkpoints/
 ############
+
+# logs #
+logs/*
+!logs/set_logger.py
+!logs/__init__.py
 
 # coisas aleatórias #
 REMINDER.md
