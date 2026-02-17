@@ -11,5 +11,6 @@
         "--max-line-length=128",
         "--extend-ignore=E203"
     ],
-    "python.terminal.activateEnvInCurrentTerminal": true
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.analysis.extraPaths": ["./"]
 }
