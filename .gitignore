@@ -19,13 +19,13 @@ src_cpp/.sconsign.dblite
 ###################
 
 # dados #
-ml_model_workspace/data/*
-ml_model_workspace/TODO.md
-!ml_model_workspace/data/README.md
-!ml_model_workspace/data/.gitkeep
+data/*
+!data/README.md
+!data/.gitkeep
 #########
 
 # modelo #
+ml_model_scripts/TODO.md
 models/*.pt
 models/*.pth
 models/*.onnx
