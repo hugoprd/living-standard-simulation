@@ -92,11 +92,9 @@ def normalize_demography(df: DataFrame) -> DataFrame:
 
     print_log_type("DEMOGRAPHY")
 
-    df.columns = ["municipio", "populacao", "area", "densidade"]
+    df = df[["munic", "ano", "pop_munic"]]
 
-    df["municipio"] = df["municipio"].str.replace(
-        " (RJ)", "", regex=False
-    )  # remove o sufixo " (RJ)" de todas as cidades (ex: "Macaé (RJ)" -> "Macaé")
+    df = df.rename(columns={"munic": "municipio", "pop_munic": "populacao"})
 
     df["municipio"] = padronize_df_column_string(df, "municipio")
 
@@ -245,8 +243,6 @@ def normalize_security(df: DataFrame) -> DataFrame:
 def normalize_femicide(femi_df: DataFrame, demo_df: DataFrame) -> DataFrame:
     """
     Normalize FEMICIDE type database.
-
-    Uses the demographic DataFrame to convert the absolute number of cases into a rate per 100K inhabitants.
     """
 
     print_log_type("FEMICIDE")
@@ -263,7 +259,15 @@ def normalize_femicide(femi_df: DataFrame, demo_df: DataFrame) -> DataFrame:
         "fase",
     ]
 
+    femi_df["ano"] = pd.to_numeric(femi_df["ano"], errors="coerce")
+    femi_df["vitimas_feminicidio"] = pd.to_numeric(femi_df["vitimas_feminicidio"], errors="coerce")
+
+    femi_df = femi_df.dropna(subset=["ano", "vitimas_feminicidio"])
+
     femi_df["municipio"] = padronize_df_column_string(femi_df, "municipio")
+
+    femi_df["ano"] = femi_df["ano"].astype(int)
+    demo_df["ano"] = demo_df["ano"].astype(int)
 
     agrup_femi_df = femi_df.groupby(["municipio", "ano"]).agg({"vitimas_feminicidio": "sum"}).reset_index()
 
@@ -314,11 +318,7 @@ def get_data_demography(file: str) -> DataFrame:
     Get data for DEMOGRAPHY type.
     """
 
-    print(file)
-
-    df = pd.read_excel(file, skiprows=3, skipfooter=1, header=None, engine="openpyxl")
-    # o skiprows pula X linhas da tabela
-    # o skipfooter pula X linhas só que de baixo para cima
+    df = pd.read_csv(file, sep=";", encoding="latin-1")
 
     return df
 
