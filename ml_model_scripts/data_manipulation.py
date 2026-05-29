@@ -244,7 +244,6 @@ def normalize_femicide(femi_df: DataFrame, demo_df: DataFrame) -> DataFrame:
     """
     Normalize FEMICIDE type database.
     """
-
     print_log_type("FEMICIDE")
 
     femi_df.columns = [
@@ -261,13 +260,27 @@ def normalize_femicide(femi_df: DataFrame, demo_df: DataFrame) -> DataFrame:
 
     femi_df["ano"] = pd.to_numeric(femi_df["ano"], errors="coerce")
     femi_df["vitimas_feminicidio"] = pd.to_numeric(femi_df["vitimas_feminicidio"], errors="coerce")
-
     femi_df = femi_df.dropna(subset=["ano", "vitimas_feminicidio"])
 
     femi_df["municipio"] = padronize_df_column_string(femi_df, "municipio")
 
     femi_df["ano"] = femi_df["ano"].astype(int)
     demo_df["ano"] = demo_df["ano"].astype(int)
+
+    ano_max_demo = demo_df["ano"].max()  # Descobre que é 2022
+    ano_max_femi = femi_df["ano"].max()  # Descobre que é 2026
+
+    if ano_max_femi > ano_max_demo:
+        demo_ultimo_ano = demo_df[demo_df["ano"] == ano_max_demo].copy()
+
+        anos_extras = []
+
+        for ano_novo in range(ano_max_demo + 1, ano_max_femi + 1):
+            temp_df = demo_ultimo_ano.copy()
+            temp_df["ano"] = ano_novo
+            anos_extras.append(temp_df)
+
+        demo_df = pd.concat([demo_df] + anos_extras, ignore_index=True)
 
     agrup_femi_df = femi_df.groupby(["municipio", "ano"]).agg({"vitimas_feminicidio": "sum"}).reset_index()
 
