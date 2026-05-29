@@ -22,7 +22,7 @@ logger.info("=" * 32)
 logger.info("LOG INICIALIZED.")
 ###################
 
-DATA_PATH = ROOT_DIR / "data"
+DATA_PATH = ROOT_DIR / "data/raw"
 
 TYPES = ["DEMOGRAPHY", "LIFE_CONDITION", "EMPREGABILITY", "SECURITY", "FEMICIDE"]
 
@@ -34,10 +34,12 @@ def time_count(func):
 
     def wrap(*args, **kwargs):
         pre_run = time.time()
-        func(*args, **kwargs)
+        result = func(*args, **kwargs)
         post_run = time.time()
 
         logger.info(f"{func.__name__} ran in {(post_run - pre_run):.6f} seconds.")
+
+        return result
 
     return wrap
 
@@ -115,7 +117,7 @@ def normalize_life_condition(df: DataFrame) -> DataFrame:
     df = df[~df["municipio"].str.contains("Fontes:", na=False)]
 
     df["municipio"] = df["municipio"].str.replace(r"\s+\([A-Z]{2}\)$", "", regex=True)
-    df["municipio"] = padronize_df_column_string(df["municipio"])
+    df["municipio"] = padronize_df_column_string(df, "municipio")
 
     mantain_columns = [
         c for c in df.columns if "Desagregação" not in c
@@ -198,7 +200,7 @@ def normalize_empregability(df: DataFrame) -> DataFrame:
     ].copy()  # filtra apenas o bloco de "Total" (ignorando as quebras por tipo de emprego)
 
     df = df[
-        df["uf_e_municipio"] != "Rio de Janeiro"
+        df["municipio"] != "Rio de Janeiro"
     ]  # remove a linha do Estado (que não tem " (RJ)") para não confundir com a Cidade
 
     df["municipio"] = df["municipio"].str.replace(
@@ -249,19 +251,23 @@ def normalize_femicide(femi_df: DataFrame, demo_df: DataFrame) -> DataFrame:
 
     print_log_type("FEMICIDE")
 
-    femi_df.columns = ["cips", "aisp", "risp", "municipio", "mes", "ano", "feminicidio", "tentativa_feminicidio", "fase"]
+    femi_df.columns = [
+        "cips",
+        "aisp",
+        "risp",
+        "municipio",
+        "mes",
+        "ano",
+        "vitimas_feminicidio",
+        "tentativa_feminicidio",
+        "fase",
+    ]
 
     femi_df["municipio"] = padronize_df_column_string(femi_df, "municipio")
 
-    agrup_femi_df = (
-        femi_df.groupby(["municipio", "ano"])
-        .agg({"vitimas_feminicidio": "sum"})  # soma todas as vítimas das delegacias daquele município no ano
-        .reset_index()
-    )
+    agrup_femi_df = femi_df.groupby(["municipio", "ano"]).agg({"vitimas_feminicidio": "sum"}).reset_index()
 
-    crossed_df = pd.merge(
-        agrup_femi_df, demo_df, on=["municipio", "ano"], how="inner"  # mantém apenas onde há dados de crime & de população
-    )
+    crossed_df = pd.merge(agrup_femi_df, demo_df, on=["municipio", "ano"], how="inner")
 
     crossed_df["taxa_feminicidio_100k"] = (crossed_df["vitimas_feminicidio"] / crossed_df["populacao"]) * 100000
     crossed_df["taxa_feminicidio_100k"] = crossed_df["taxa_feminicidio_100k"].round(2)
@@ -322,7 +328,7 @@ def get_data_life_condition(file: str) -> DataFrame:
     Get data for LIFE CONDITION type.
     """
 
-    df = pd.read_excel(file, header=None, engine="openpyxl")
+    df = pd.read_excel(file, engine="openpyxl")
 
     return df
 
@@ -376,31 +382,39 @@ def get_data() -> dict:
     }
 
     dfs = {type: [] for type in TYPES}
+    files_map = {}
 
     for file in DATA_PATH.rglob("*"):
         if file.is_dir() or file.suffix == ".md":
             continue
 
-        file = str(file)
-        file_upper = file.upper()
+        file_str = str(file)
+        file_upper = file_str.upper()
 
-        matched_type, return_value = check_type(file_upper, data_rules, "CONTAINS", file)
+        matched_type, return_value = check_type(file_upper, data_rules, "CONTAINS", file_str)
 
         if matched_type:
-            df = return_value
+            dfs[matched_type] = return_value
+            files_map[matched_type] = file_str
         else:
-            logger.warning(f"Type of {file} is invalid. Skipping file process.")
+            logger.warning(f"Type of {file_str} is invalid. Skipping file process.")
 
             continue
 
-        normalized_df = data_normalize(df, file, matched_type)
+    for matched_type, raw_df in dfs.items():
+        if isinstance(raw_df, list) and len(raw_df) == 0:
+            continue
+
+        file_str = files_map[matched_type]
 
         if matched_type == "FEMICIDE":
-            normalized_df = data_normalize(df, file, matched_type, dfs["DEMOGRAPHY"])
+            normalized_df = data_normalize(raw_df, file_str, matched_type, demo_df=dfs["DEMOGRAPHY"])
+        else:
+            normalized_df = data_normalize(raw_df, file_str, matched_type)
 
         dfs[matched_type] = normalized_df
 
-        logger.info(f"File's '{file}' DataFrame created and put in '{matched_type}' type.")
+        logger.info(f"File's '{file_str}' DataFrame created and put in '{matched_type}' type.")
 
     logger.info("Data extraction complete.")
 
