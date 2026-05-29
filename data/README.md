@@ -12,8 +12,8 @@ O projeto concentra-se em dados do estado e da capital do Rio de Janeiro. Devido
 
 ## Dados utilizados para o treinamento do modelo:
 
-- Dados para a normalização de bases necessitadas:
-    - [População Residente, Área territorial e Densidade demográfica (Estado Rio de Janeiro)](https://sidra.ibge.gov.br/tabela/4714/#)
+- Dados para a normalização de bases necessitadas (Demografia):
+    - [População: série anual por município (2000 a 2022) (Estado do Rio de Janeiro) - ISP](https://www.ispdados.rj.gov.br/Arquivos/PopulacaoEvolucaoMensalMunic.csv)
 
 - [Dados de Segurança do Rio de Janeiro](https://www.ispdados.rj.gov.br/estatistica.html):
     - [Estatísticas de segurança: série histórica mensal por área de delegacia desde 01/2003 (taxas por 100 mil habitantes)](https://www.ispdados.rj.gov.br/Arquivos/BaseEstadoTaxaMes.csv)
