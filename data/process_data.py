@@ -20,7 +20,7 @@ LOG_NAME = "data_log"
 setup_logger(log_file_path=LOG_FILE, log_name=LOG_NAME, overwrite=True)
 
 logger.info("=" * 32)
-logger.info("LOG INICIALIZED.")
+logger.info("LOG INITIALIZED.")
 ###################
 
 DATA_PATH = ROOT_DIR / "data/raw"
