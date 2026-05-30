@@ -1,9 +1,10 @@
 import sys
 from pathlib import Path
-import time
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
+
+from utils.time_utils import time_count  # noqa: E402
 
 from loguru import logger  # noqa: E402
 from logs.set_logger import setup_logger  # noqa: E402
@@ -23,25 +24,9 @@ logger.info("LOG INICIALIZED.")
 ###################
 
 DATA_PATH = ROOT_DIR / "data/raw"
+PROCESSED_PATH = ROOT_DIR / "data/processed"
 
 TYPES = ["DEMOGRAPHY", "LIFE_CONDITION", "EMPREGABILITY", "SECURITY", "FEMICIDE"]
-
-
-def time_count(func):
-    """
-    Measures execution time.
-    """
-
-    def wrap(*args, **kwargs):
-        pre_run = time.time()
-        result = func(*args, **kwargs)
-        post_run = time.time()
-
-        logger.info(f"{func.__name__} ran in {(post_run - pre_run):.6f} seconds.")
-
-        return result
-
-    return wrap
 
 
 def print_log_type(type: str):
@@ -434,13 +419,35 @@ def get_data() -> dict:
     return dfs
 
 
-def main():
-    dfs = get_data()
+@time_count
+def save_data(dfs: dict):
+    """
+    Saves the normalized DataFrames into the processed data folder.
+    """
 
-    for type, df in dfs.items():
-        print(f"DATAFRAME TIPO {type}: ")
-        print(df)
+    logger.info("Starting data export to processed folder.")
+
+    PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+
+    for type_key, df in dfs.items():
+        if df is None or (isinstance(df, list) and len(df) == 0):
+            logger.warning(f"No data to save for '{type_key}'. Skipping.")
+            continue
+
+        file_name = f"{type_key.lower()}_normalized.csv"
+        output_path = PROCESSED_PATH / file_name
+
+        df.to_csv(output_path, index=False, sep=";", encoding="utf-8")
+
+        logger.info(f"Successfully saved '{type_key}' DataFrame to: {file_name}")
+
+    logger.info("Data export complete.")
+
+
+def process_data():
+    dfs = get_data()
+    save_data(dfs)
 
 
 if __name__ == "__main__":
-    main()
+    process_data()
