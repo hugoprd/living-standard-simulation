@@ -1,0 +1,74 @@
+# ==========================================
+# CONFIGURAÇÕES DO MODELO - LIVING STANDARD
+# ==========================================
+
+##### CONFIGURAÇÕES DE DADOS #####
+data:
+  filepath: "data/refined/master_living_standard.parquet"
+  target_column:
+    - "taxa_feminicidio_100k"
+    - "hom_doloso"
+    -	"lesao_corp_morte"
+    -	"latrocinio"
+    -	"cvli"
+    -	"hom_por_interv_policial"
+    -	"letalidade_violenta"
+    -	"tentat_hom"
+    -	"lesao_corp_dolosa"
+    -	"estupro"
+    -	"hom_culposo"
+    -	"lesao_corp_culposa"
+    -	"roubo_transeunte"
+    -	"roubo_celular"
+    -	"roubo_em_coletivo"
+    -	"roubo_rua"
+    -	"roubo_veiculo"
+    -	"roubo_carga"
+    -	"roubo_comercio"
+    -	"roubo_residencia"
+    -	"roubo_banco"
+    -	"roubo_cx_eletronico"
+    -	"roubo_conducao_saque"
+    -	"roubo_apos_saque"
+    -	"roubo_bicicleta"
+    -	"outros_roubos"
+    -	"total_roubos"
+    -	"furto_veiculos"
+    -	"furto_transeunte"
+    -	"furto_coletivo"
+    -	"furto_celular"
+    -	"furto_bicicleta"
+    -	"outros_furtos"
+    -	"total_furtos"
+    -	"sequestro"
+    -	"extorsao"
+    -	"sequestro_relampago"
+    -	"estelionato"
+    -	"apreensao_drogas"
+    -	"posse_drogas"
+    -	"trafico_drogas"
+    -	"apreensao_drogas_sem_autor"
+
+  drop_columns: ["municipio", "cips", "aisp", "risp"]
+  test_size: 0.2
+  random_state: 42
+##################################
+
+
+##### CONFIGURAÇÕES DA ARQUITETURA #####
+model:
+  hidden_layers: [128, 64, 32]
+  activation: "relu"
+  dropout_rate: 0.1
+########################################
+
+
+##### CONFIGURAÇÕES DE TREINAMENTO #####
+training:
+  epochs: 200
+  batch_size: 32
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "mse"
+  patience: 15
+########################################
