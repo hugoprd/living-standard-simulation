@@ -26,6 +26,9 @@ logger.info("LOG INITIALIZED.")
 DATA_PATH = ROOT_DIR / "data/raw"
 PROCESSED_PATH = ROOT_DIR / "data/processed"
 
+DATA_PATH.mkdir(parents=True, exist_ok=True)
+PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+
 TYPES = ["DEMOGRAPHY", "LIFE_CONDITION", "EMPREGABILITY", "SECURITY", "FEMICIDE"]
 
 

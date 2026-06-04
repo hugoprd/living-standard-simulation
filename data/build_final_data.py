@@ -27,6 +27,9 @@ logger.info("LOG INITIALIZED.")
 DATA_PATH = ROOT_DIR / "data/processed"
 REFINED_PATH = ROOT_DIR / "data/refined"
 
+DATA_PATH.mkdir(parents=True, exist_ok=True)
+REFINED_PATH.mkdir(parents=True, exist_ok=True)
+
 
 def load_data() -> dict[DataFrame]:
     """
