@@ -6,10 +6,10 @@ from datetime import datetime
 
 def setup_logger(log_file_path: Path, log_name: str, overwrite: bool):
     """
-    Configura o log.
+    Configures the log.
 
-    Se overwrite=True, limpa o arquivo antigo.
-    Se overwrite=False, cria um arquivo novo com data e hora.
+    If overwrite=True, cleans the old file.
+    If overwrite=False, it creates a new file with data.
     """
 
     if overwrite:
