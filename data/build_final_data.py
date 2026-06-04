@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from functools import reduce
+from sklearn.preprocessing import MinMaxScaler
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
@@ -28,6 +29,10 @@ REFINED_PATH = ROOT_DIR / "data/refined"
 
 
 def load_data() -> dict[DataFrame]:
+    """
+    Loads all data from the processed directory and returns a directory with all the DataFrames.
+    """
+
     dfs = {}
 
     for file in DATA_PATH.rglob("*.csv"):
@@ -43,6 +48,11 @@ def load_data() -> dict[DataFrame]:
 
 @time_count
 def build_final_data():
+    """
+    Loads and merges all processed data and calculates a derived risk index into a master DataFrame.
+    Appends the risk index feature and exports the refined dataset to CSV and Parquet formats.
+    """
+
     dfs = load_data()
 
     if not dfs:
@@ -56,6 +66,56 @@ def build_final_data():
     df_final = reduce(lambda left, right: pd.merge(left, right, on=["municipio", "ano"], how="outer"), dataframes)
 
     df_final = df_final.sort_values(by=["municipio", "ano"]).reset_index(drop=True)
+
+    cols_crime = [
+        "taxa_feminicidio_100k",
+        "hom_doloso",
+        "lesao_corp_morte",
+        "latrocinio",
+        "cvli",
+        "hom_por_interv_policial",
+        "letalidade_violenta",
+        "tentat_hom",
+        "lesao_corp_dolosa",
+        "estupro",
+        "hom_culposo",
+        "lesao_corp_culposa",
+        "roubo_transeunte",
+        "roubo_celular",
+        "roubo_em_coletivo",
+        "roubo_rua",
+        "roubo_veiculo",
+        "roubo_carga",
+        "roubo_comercio",
+        "roubo_residencia",
+        "roubo_banco",
+        "roubo_cx_eletronico",
+        "roubo_conducao_saque",
+        "roubo_apos_saque",
+        "roubo_bicicleta",
+        "outros_roubos",
+        "total_roubos",
+        "furto_veiculos",
+        "furto_transeunte",
+        "furto_coletivo",
+        "furto_celular",
+        "furto_bicicleta",
+        "outros_furtos",
+        "total_furtos",
+        "sequestro",
+        "extorsao",
+        "sequestro_relampago",
+        "estelionato",
+        "apreensao_drogas",
+        "posse_drogas",
+        "trafico_drogas",
+        "apreensao_drogas_sem_autor",
+    ]
+
+    scaler = MinMaxScaler()
+
+    df_scaled = pd.DataFrame(scaler.fit_transform(df_final[cols_crime]), columns=cols_crime)
+    df_final["indice_periculosidade"] = df_scaled.sum(axis=1)
 
     REFINED_PATH.mkdir(parents=True, exist_ok=True)
 
