@@ -3,17 +3,20 @@
 TARGET_ENV="liv-stan-simulation"
 
 if [ "$CONDA_DEFAULT_ENV" = "$TARGET_ENV" ]; then
-    echo "Ambiente '$TARGET_ENV' já está ativo."
+    echo "Environment '$TARGET_ENV' is already active."
+    return 0
 else
-    echo "Ativando ambiente '$TARGET_ENV'..."
+    echo "Activating environment '$TARGET_ENV'..."
 
     source ~/miniconda3/etc/profile.d/conda.sh
     
     conda activate $TARGET_ENV
     
     if [ $? -eq 0 ]; then
-        echo "Ambiente ativado."
+        echo "Environment activated successfully."
+        return 0
     else
-        echo "Erro ao ativar o ambiente. Verifique se o nome está correto."
+        echo "ERROR: Failed to activate the environment. Please check if the name is correct."
+        return 1
     fi
 fi
