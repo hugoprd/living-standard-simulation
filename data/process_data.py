@@ -300,10 +300,24 @@ def data_normalize(df: DataFrame, file: str, type: str, **kwargs) -> DataFrame:
 
     if matched_type:
         df_normalized = return_value
+
+        if "municipio" in df_normalized.columns:
+            tamanho_antes = df_normalized.shape[0]
+
+            # remove linhas onde o município é apenas "_"
+            df_normalized = df_normalized[df_normalized["municipio"] != "_"]
+
+            # remove linhas onde o município está vazio (NaN/None)
+            df_normalized = df_normalized.dropna(subset=["municipio"])
+
+            linhas_removidas = tamanho_antes - df_normalized.shape[0]  # registra no log se alguma linha foi jogada fora
+            if linhas_removidas > 0:
+                logger.info(f"Data Quality: Removidas {linhas_removidas} linhas com municípios inválidos.")
+
     else:
         logger.warning(
-            f"'{matched_type}' type is incompatible with the '{file}' file.",
-            "Skipping the proccess and returning database not normalized.",
+            f"'{matched_type}' type is incompatible with the '{file}' file. "
+            "Skipping the proccess and returning database not normalized."
         )
 
         return df
