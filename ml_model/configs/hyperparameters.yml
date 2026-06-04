@@ -1,11 +1,8 @@
-# ==========================================
-# CONFIGURAÇÕES DO MODELO - LIVING STANDARD
-# ==========================================
-
 ##### CONFIGURAÇÕES DE DADOS #####
 data:
   filepath: "data/refined/master_living_standard.parquet"
-  target_column:
+  target_main: "indice_periculosidade"
+  target_auxiliary:
     - "taxa_feminicidio_100k"
     - "hom_doloso"
     -	"lesao_corp_morte"
@@ -69,6 +66,9 @@ training:
   batch_size: 32
   learning_rate: 0.001
   optimizer: "adam"
-  loss_function: "mse"
+  loss_weights:
+    main_task: 0.7
+    auxiliary_task: 0.3
+  
   patience: 15
 ########################################
