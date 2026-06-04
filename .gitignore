@@ -19,7 +19,9 @@ src_cpp/.sconsign.dblite
 ###################
 
 # dados #
-data/*
+data/raw/*
+data/processed/*
+data/refined/*
 !data/build_final_data.py
 !data/process_data.py
 !data/README.md
